@@ -72,7 +72,6 @@ public class CreateChatActivity extends BaseActivity implements BaseListAdapter.
     List<QBUser> localUsers = new ArrayList<>();
     private Set<QBUser> filteredUsers;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

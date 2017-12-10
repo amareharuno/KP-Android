@@ -88,10 +88,8 @@ public class DialogsAdapter extends BaseAdapter {
 
             @Override
             public void onError(QBResponseException e) {
-
             }
         });
-
 
         if (dialog.getUnreadMessageCount() > 0) {
             view.setBackgroundColor(context.getResources().getColor(android.R.color.holo_blue_light));

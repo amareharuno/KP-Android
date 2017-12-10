@@ -58,12 +58,10 @@ public class FileDownloadService extends IntentService {
                 if (fileId == null) return;
                 File targetFile = new File(getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), fileName);
                 if (!targetFile.exists()) {
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(FileDownloadService.this, R.string.download_started, Toast.LENGTH_LONG).show();
-                        }
-                    });
+                    handler.post(() -> Toast.makeText(
+                            FileDownloadService.this,
+                            R.string.download_started,
+                            Toast.LENGTH_LONG).show()); // Runnable()
 
                     QBFile file = QBContent.getFile(Integer.parseInt(fileId));
                     URL u = new URL(file.getPrivateUrl());
@@ -77,36 +75,33 @@ public class FileDownloadService extends IntentService {
                         outStream.write(buffer, 0, bytesRead);
                     }
                 }
+
                 MimeTypeMap myMime = MimeTypeMap.getSingleton();
                 Intent newIntent = new Intent(Intent.ACTION_VIEW);
                 String mimeType = myMime.getMimeTypeFromExtension(fileExt(fileName));
                 newIntent.setDataAndType(Uri.fromFile(targetFile), mimeType);
                 newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
                 try {
                     startActivity(newIntent);
                 } catch (ActivityNotFoundException e) {
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(FileDownloadService.this, R.string.file_downloaded, Toast.LENGTH_LONG).show();
-                        }
-                    });
+                    handler.post(() -> Toast.makeText(
+                            FileDownloadService.this,
+                            R.string.file_downloaded,
+                            Toast.LENGTH_LONG).show()); // Runnable()
                 }
-
             } catch (final IOException e) {
                 e.printStackTrace();
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(FileDownloadService.this, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-                    }
-                });
+                handler.post(() -> Toast.makeText(
+                        FileDownloadService.this,
+                        e.getLocalizedMessage(),
+                        Toast.LENGTH_LONG).show()); // Runnable()
             }
         }
     }
 
     private String fileExt(String url) {
-        if (url.indexOf("?") > -1) {
+        if (url.contains("?")) {
             url = url.substring(0, url.indexOf("?"));
         }
 
@@ -114,10 +109,10 @@ public class FileDownloadService extends IntentService {
             return null;
         } else {
             String ext = url.substring(url.lastIndexOf(".") + 1);
-            if (ext.indexOf("%") > -1) {
+            if (ext.contains("%")) {
                 ext = ext.substring(0, ext.indexOf("%"));
             }
-            if (ext.indexOf("/") > -1) {
+            if (ext.contains("/")) {
                 ext = ext.substring(0, ext.indexOf("/"));
             }
             return ext.toLowerCase();

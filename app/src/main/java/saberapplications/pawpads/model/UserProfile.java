@@ -2,12 +2,11 @@ package saberapplications.pawpads.model;
 
 import com.google.gson.Gson;
 
-
 public class UserProfile {
-    int age;
-    String gender;
-    String hobby;
-    int backgroundId = -1;
+    private int age;
+    private String gender;
+    private String hobby;
+    private int backgroundId = -1;
     private String about;
 
     public static UserProfile createFromJson(String json) {

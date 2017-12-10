@@ -97,7 +97,6 @@ import saberapplications.pawpads.views.BaseListAdapter;
 import saberapplications.pawpads.views.giphyselector.Giphy;
 import saberapplications.pawpads.views.giphyselector.GiphySelector;
 
-
 public class ChatGroupActivity extends BaseActivity {
     public static final String DIALOG = "dialog";
     public static final String DIALOG_ID = "dialog_id";
@@ -181,7 +180,6 @@ public class ChatGroupActivity extends BaseActivity {
     };
 
     private QBGroupChat groupChat;
-
     private boolean isBlocked;
     private boolean userDeleted;
     private int currentCode;
@@ -242,8 +240,6 @@ public class ChatGroupActivity extends BaseActivity {
             }
         });
         initStickersWidget();
-
-
     }
 
     private void initForGroupChat() {
@@ -254,7 +250,6 @@ public class ChatGroupActivity extends BaseActivity {
                 binding.addGroupMember.setVisibility(dialog.getType() == QBDialogType.GROUP ? View.VISIBLE : View.GONE);
             }
         });
-
     }
 
     private void initStickersWidget() {

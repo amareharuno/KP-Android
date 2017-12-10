@@ -26,7 +26,7 @@ public class BindableBoolean extends BaseObservable {
     public void set(Boolean value) {
         if (this.value == null || !this.value.equals(value)) {
             this.value = value;
-            if (not != null) this.not.set(!value.booleanValue());
+            if (not != null) this.not.set(!value);
             notifyChange();
         }
     }
@@ -55,12 +55,7 @@ public class BindableBoolean extends BaseObservable {
 
     @BindingAdapter({"binding2way"})
     public static void bindCheckBox(CheckBox view, final BindableBoolean bindableBoolean) {
-        view.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                bindableBoolean.set(isChecked);
-            }
-        });
+        view.setOnCheckedChangeListener((buttonView, isChecked) -> bindableBoolean.set(isChecked)); // CompoundButton.OnCheckedChangeListener()
 
         boolean newValue = bindableBoolean.get();
         if (view.isChecked() != newValue) {
@@ -78,7 +73,7 @@ public class BindableBoolean extends BaseObservable {
     }
 
     @BindingAdapter({"android:visibility"})
-    public static void bindVisibilityToBooolean(View view, boolean b) {
+    public static void bindVisibilityToBoolean(View view, boolean b) {
         if (b) {
             view.setVisibility(View.VISIBLE);
         } else {

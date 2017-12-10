@@ -72,7 +72,6 @@ public class ChatMessagesAdapter extends BaseChatAdapter<QBChatMessage> {
 
         @Override
         public void showData(DataItem<QBChatMessage> model, int position) {
-
         }
 
         public void downloadAttachment() {
@@ -80,7 +79,6 @@ public class ChatMessagesAdapter extends BaseChatAdapter<QBChatMessage> {
                 FileDownloadService.startService(adapter.mContext, attachment);
             }
         }
-
     }
 
 
@@ -122,7 +120,6 @@ public class ChatMessagesAdapter extends BaseChatAdapter<QBChatMessage> {
                     binding.setMessage(item.getBody());
                 }
 
-
                 if (iterator.hasNext()) {
                     QBAttachment thumbAttachment = iterator.next();
                     if (thumbAttachment.getType().equals("thumb")) {
@@ -135,6 +132,7 @@ public class ChatMessagesAdapter extends BaseChatAdapter<QBChatMessage> {
             } else {
                 attachment = null;
             }
+
             if (item.getProperty(C.CHAT_MSG_STICKER_PROPERTY) != null) {
                 binding.text.setBackgroundColor(ContextCompat.getColor(itemView.getContext(), android.R.color.transparent));
                 binding.setShowThumbNail(true);
@@ -185,7 +183,6 @@ public class ChatMessagesAdapter extends BaseChatAdapter<QBChatMessage> {
                             })
                             .into(binding.thumb);
                 }
-
             }
         }
     }
@@ -285,8 +282,6 @@ public class ChatMessagesAdapter extends BaseChatAdapter<QBChatMessage> {
             SimpleDateFormat dateFormat = new SimpleDateFormat("d MMM h:mm a");
             return dateFormat.format(date);
         }
-
-
     }
 
     public boolean groupWithPrevMessage(int position, QBChatMessage currentMessage) {

@@ -101,7 +101,6 @@ public class ChatGroupMessagesAdapter extends BaseChatAdapter<QBChatMessage> {
 
         @Override
         public void showData(DataItem<QBChatMessage> model, int position) {
-
         }
 
         public void downloadAttachment() {
@@ -126,7 +125,6 @@ public class ChatGroupMessagesAdapter extends BaseChatAdapter<QBChatMessage> {
 
                     @Override
                     public void onError(QBResponseException e) {
-
                     }
                 });
             } else {
@@ -228,7 +226,6 @@ public class ChatGroupMessagesAdapter extends BaseChatAdapter<QBChatMessage> {
                     binding.setMessage(item.getBody());
                 }
 
-
                 if (iterator.hasNext()) {
                     QBAttachment thumbAttachment = iterator.next();
                     if (thumbAttachment.getType().equals("thumb")) {
@@ -291,7 +288,6 @@ public class ChatGroupMessagesAdapter extends BaseChatAdapter<QBChatMessage> {
                             })
                             .into(binding.thumb);
                 }
-
             }
         }
     }
@@ -433,7 +429,6 @@ public class ChatGroupMessagesAdapter extends BaseChatAdapter<QBChatMessage> {
     }
 
     public String formatDate(Date date) {
-
         Calendar today = GregorianCalendar.getInstance();
         today.set(Calendar.HOUR, 0);
         today.set(Calendar.MINUTE, 0);
@@ -446,7 +441,5 @@ public class ChatGroupMessagesAdapter extends BaseChatAdapter<QBChatMessage> {
             SimpleDateFormat dateFormat = new SimpleDateFormat("d MMM h:mm a");
             return dateFormat.format(date);
         }
-
-
     }
 }

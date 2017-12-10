@@ -9,7 +9,6 @@ import android.widget.EditText;
 
 import saberapplications.pawpads.R;
 
-
 public class BindableString extends BaseObservable {
     private String value;
 
@@ -38,35 +37,30 @@ public class BindableString extends BaseObservable {
     }
 
     @BindingConversion
-    public static String convertBindableToString(
-            BindableString bindableString) {
+    public static String convertBindableToString(BindableString bindableString) {
         return bindableString.get();
     }
 
     @BindingAdapter({"binding2way"})
-    public static void bindEditText(EditText view,
-                                    final BindableString bindableString) {
-
+    public static void bindEditText(EditText view, final BindableString bindableString) {
         if (view.getTag(R.id.BIND_ID) == null) {
             view.setTag(R.id.BIND_ID, true);
             view.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
                 }
 
                 @Override
-                public void onTextChanged(CharSequence s, int start,
-                                          int before, int count) {
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
                     bindableString.set(s.toString());
                 }
 
                 @Override
                 public void afterTextChanged(Editable s) {
-
                 }
             });
         }
+
         String newValue = bindableString.get();
         if (!view.getText().toString().equals(newValue)) {
             view.setText(newValue);
@@ -76,7 +70,7 @@ public class BindableString extends BaseObservable {
     @Override
     public boolean equals(Object o) {
         if (o instanceof String) {
-            return value.equals((String) o);
+            return value.equals(o);
         }
         if (o instanceof BindableString) {
             BindableString b = (BindableString) o;

@@ -99,7 +99,6 @@ import saberapplications.pawpads.views.BaseListAdapter;
 import saberapplications.pawpads.views.giphyselector.Giphy;
 import saberapplications.pawpads.views.giphyselector.GiphySelector;
 
-
 public class ChatActivity extends BaseActivity {
     public static final String DIALOG = "dialog";
     public static final String RECIPIENT = "recipient";
@@ -114,6 +113,7 @@ public class ChatActivity extends BaseActivity {
     public final BindableBoolean isSendingMessage = new BindableBoolean();
     public final BindableInteger uploadProgress = new BindableInteger(0);
     public final BindableBoolean isBusy = new BindableBoolean(true);
+
     //EditText editText_mail_id;
     EditText editText_chat_message;
     Button button_send_chat;
@@ -124,11 +124,12 @@ public class ChatActivity extends BaseActivity {
     long paused;
     boolean gotMessagesInOffline = false;
     private Uri mPhotoUri;
-    //    BroadcastReceiver recieve_chat;
+
+    //    BroadcastReceiver receive_chat;
     private QBDialog dialog;
     private QuarterScreenWidget mStickersWidget;
     private FrameLayout mStickersContainer;
-    BroadcastReceiver updateChatReciever = new BroadcastReceiver() {
+    BroadcastReceiver updateChatReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (dialog.getDialogId().equals(intent.getStringExtra(DIALOG_ID))) {
@@ -137,7 +138,6 @@ public class ChatActivity extends BaseActivity {
         }
     };
 
-
     private QBUser recipient;
     private ChatMessagesAdapter chatAdapter;
     private FrameLayout blockedContainer;
@@ -145,21 +145,17 @@ public class ChatActivity extends BaseActivity {
     private QBMessageListener messageListener = new QBMessageListener() {
         @Override
         public void processMessage(QBChat qbChat, final QBChatMessage qbChatMessage) {
-            ChatActivity.this.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    if (qbChatMessage.getProperties().containsKey("blocked")) {
-                        if (qbChatMessage.getProperty("blocked").equals("1")) {
-                            onBlocked();
-                        } else if (qbChatMessage.getProperty("blocked").equals("0")) {
-                            onUnBlocked();
-                        }
-                    } else {
-                        displayChatMessage(qbChatMessage);
+            ChatActivity.this.runOnUiThread(() -> {
+                if (qbChatMessage.getProperties().containsKey("blocked")) {
+                    if (qbChatMessage.getProperty("blocked").equals("1")) {
+                        onBlocked();
+                    } else if (qbChatMessage.getProperty("blocked").equals("0")) {
+                        onUnBlocked();
                     }
-
+                } else {
+                    displayChatMessage(qbChatMessage);
                 }
-            });
+            }); // Runnable()
         }
 
         @Override
@@ -168,9 +164,7 @@ public class ChatActivity extends BaseActivity {
         }
     };
 
-
     private QBPrivateChat privateChat;
-
     private boolean isBlocked;
     private boolean userDeleted;
     private int currentCode;
@@ -202,7 +196,6 @@ public class ChatActivity extends BaseActivity {
 
             @Override
             public void onItemClick(QBChatMessage item) {
-
             }
         });
 
@@ -217,42 +210,30 @@ public class ChatActivity extends BaseActivity {
         }
         this.savedInstanceState = savedInstanceState;
 
-        editText_chat_message = (EditText) findViewById(R.id.editText_chat_message);
+        editText_chat_message = findViewById(R.id.editText_chat_message);
 
-        button_send_chat = (Button) findViewById(R.id.button_send_chat);
-        blockedContainer = (FrameLayout) findViewById(R.id.block_container);
-        messageContainer = (ViewGroup) findViewById(R.id.message_container);
+        button_send_chat = findViewById(R.id.button_send_chat);
+        blockedContainer = findViewById(R.id.block_container);
+        messageContainer = findViewById(R.id.message_container);
 
-        LocalBroadcastManager.getInstance(this).registerReceiver(updateChatReciever, new IntentFilter(C.UPDATE_CHAT));
-        binding.giphySelector.setCallback(new GiphySelector.Callback() {
-            @Override
-            public void onSelected(Giphy giphy) {
-                sendSticker(Uri.parse(giphy.getFull().getUrl()));
-            }
-        });
+        LocalBroadcastManager.getInstance(this).registerReceiver(updateChatReceiver, new IntentFilter(C.UPDATE_CHAT));
+        binding.giphySelector.setCallback(giphy -> sendSticker(Uri.parse(giphy.getFull().getUrl()))); // GiphySelector.Callback() - onSelected()
         initStickersWidget();
-
-
     }
 
-
     private void init() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                binding.recipientAvatar.setVisibility(View.VISIBLE);
-                if (recipient == null || userDeleted) return;
-                if (recipient.getFileId() != null) {
-                    float d = getResources().getDisplayMetrics().density;
-                    int size = Math.round(80 * d);
-                    AvatarLoaderHelper.loadImage(recipient.getFileId(), binding.recipientAvatar, size, size);
-                }
-                binding.setUsername(Util.getUserName(recipient));
-                binding.setBindStatusVisibility(true);
-                binding.setOnlineStatus(UserStatusHelper.getUserStatus(recipient));
+        runOnUiThread(() -> { // Runnable()
+            binding.recipientAvatar.setVisibility(View.VISIBLE);
+            if (recipient == null || userDeleted) return;
+            if (recipient.getFileId() != null) {
+                float d = getResources().getDisplayMetrics().density;
+                int size = Math.round(80 * d);
+                AvatarLoaderHelper.loadImage(recipient.getFileId(), binding.recipientAvatar, size, size);
             }
+            binding.setUsername(Util.getUserName(recipient));
+            binding.setBindStatusVisibility(true);
+            binding.setOnlineStatus(UserStatusHelper.getUserStatus(recipient));
         });
-
     }
 
     private void initStickersWidget() {
@@ -266,10 +247,9 @@ public class ChatActivity extends BaseActivity {
         mStickersWidget = new QuarterScreenWidget(
                 this,
                 options,
-                new SearchResultAdapter.ImageLoader() {
-                    @Override
-                    public void loadImage(@NonNull ImageView target, @NonNull Uri uri,
-                                          @NonNull final SearchResultAdapter.ImageLoaderCallback callback) {
+
+                // SearchResultAdapter.ImageLoader() - loadImage()
+                (target, uri, callback) ->
                         Glide.with(getApplicationContext())
                                 .load(uri.toString())
                                 .listener(new RequestListener<String, GlideDrawable>() {
@@ -284,14 +264,11 @@ public class ChatActivity extends BaseActivity {
                                         return false;
                                     }
                                 })
-                                .into(target);
-                    }
-                }
+                                .into(target)
         );
         mStickersWidget.setWidgetListener(new WidgetListener() {
             @Override
             public void onCloseButtonTapped() {
-                // not needed
             }
 
             @Override
@@ -503,7 +480,7 @@ public class ChatActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(updateChatReciever);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(updateChatReceiver);
 
 
     }

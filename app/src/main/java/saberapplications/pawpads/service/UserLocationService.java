@@ -38,12 +38,10 @@ import saberapplications.pawpads.Util;
 /**
  * This service sends user location updates when app is active
  */
+public class UserLocationService extends Service implements GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
-public class UserLocationService extends Service implements
-        GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener,
-        LocationListener {
-    private static final String USERID = "userid";
+    private static final String USER_ID = "userid";
     public static final String LOCATION_CHANGED = "LOCATION_CHANGED";
     public static final String LOCATION = "location";
     private GoogleApiClient mGoogleApiClient;
@@ -57,9 +55,11 @@ public class UserLocationService extends Service implements
     }
 
     public static void startService(int userId) {
-        if (!checkPermissions()) return;
+        if (!checkPermissions()) {
+            return;
+        }
         Intent intent = new Intent(PawPadsApplication.getInstance(), UserLocationService.class);
-        intent.putExtra(USERID, userId);
+        intent.putExtra(USER_ID, userId);
         PawPadsApplication.getInstance().startService(intent);
     }
 
@@ -91,7 +91,7 @@ public class UserLocationService extends Service implements
             stopSelf();
             return START_STICKY;
         }
-        userId = intent.getIntExtra(USERID, 0);
+        userId = intent.getIntExtra(USER_ID, 0);
         if (userId == 0) {
             stopSelf();
         }
@@ -117,6 +117,7 @@ public class UserLocationService extends Service implements
     public void onConnected(Bundle bundle) {
         LocationRequest locationRequest = new LocationRequest();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+
         switch (preferences.getString(C.ACCURACY, C.ACCURACY_MEDIUM)) {
             case C.ACCURACY_LOW:
                 locationRequest.setPriority(LocationRequest.PRIORITY_LOW_POWER);
@@ -130,12 +131,14 @@ public class UserLocationService extends Service implements
         }
 
         locationRequest.setInterval(C.LOCATION_PUSH_INTERVAL);
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
             return;
         }
-        LocationServices.FusedLocationApi.requestLocationUpdates(
-                mGoogleApiClient, locationRequest, this);
+
+        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, locationRequest, this);
         lastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
 
         updateLocationAsync(lastLocation);
@@ -268,14 +271,16 @@ public class UserLocationService extends Service implements
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
             Util.ACCURACY = prefs.getString(C.ACCURACY, C.ACCURACY_MEDIUM);
         }
-        if (Util.ACCURACY.equals(C.ACCURACY_HIGH)) {
-            loc = (double) Math.round(location * 1000) / 1000;
-            return loc;
-        } else if (Util.ACCURACY.equals(C.ACCURACY_LOW)) {
-            loc = (double) Math.round(location * 10) / 10;
-            return loc;
-        } else {
-            return location;
+
+        switch (Util.ACCURACY) {
+            case C.ACCURACY_HIGH:
+                loc = (double) Math.round(location * 1000) / 1000;
+                return loc;
+            case C.ACCURACY_LOW:
+                loc = (double) Math.round(location * 10) / 10;
+                return loc;
+            default:
+                return location;
         }
     }
 

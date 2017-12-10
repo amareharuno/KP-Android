@@ -9,7 +9,6 @@ import android.widget.EditText;
 
 import saberapplications.pawpads.R;
 
-
 public class BindableInteger extends BaseObservable {
 
     private Integer value;
@@ -53,42 +52,38 @@ public class BindableInteger extends BaseObservable {
     }
 
     @BindingAdapter({"binding2way"})
-    public static void bindEditText(EditText view,
-                                    final BindableInteger bindableInteger) {
-
+    public static void bindEditText(EditText view, final BindableInteger bindableInteger) {
         if (view.getTag(R.id.BIND_ID) == null) {
             view.setTag(R.id.BIND_ID, true);
             view.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
                 }
 
                 @Override
-                public void onTextChanged(CharSequence s, int start,
-                                          int before, int count) {
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
                     try {
                         bindableInteger.set(Integer.parseInt(s.toString()));
                     } catch (Exception e) {
-
+                        e.printStackTrace();
                     }
-
                 }
 
                 @Override
                 public void afterTextChanged(Editable s) {
-
                 }
             });
         }
         //initial value
-        if (bindableInteger == null) return;
+        if (bindableInteger == null) {
+            return;
+        }
         Integer newValue = bindableInteger.get();
-        if (newValue == null) return;
+        if (newValue == null) {
+            return;
+        }
         if (!view.getText().toString().equals(newValue.toString())) {
             view.setText(newValue.toString());
         }
-
-
     }
 }

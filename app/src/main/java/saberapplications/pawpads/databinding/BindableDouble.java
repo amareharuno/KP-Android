@@ -25,7 +25,7 @@ public class BindableDouble extends BaseObservable {
         }
     }
 
-    public void setSilent(double value) {
+    private void setSilent(double value) {
         if (this.value == null || !this.value.equals(value)) {
             this.value = value;
         }
@@ -63,7 +63,7 @@ public class BindableDouble extends BaseObservable {
                     try {
                         bindableDouble.setSilent(Double.parseDouble(s.toString()));
                     } catch (Exception e) {
-                        e.printStackTrace(); // lyuba
+                        e.printStackTrace();
                     }
                 }
 
@@ -72,21 +72,25 @@ public class BindableDouble extends BaseObservable {
                 }
             });
         }
+
         //initial value
-        if (bindableDouble == null) return;
+        if (bindableDouble == null) {
+            return;
+        }
         Double newValue = bindableDouble.get();
-        if (newValue == null) return;
+        if (newValue == null) {
+            return;
+        }
         String strValue = String.format(bindableDouble.getFormat(), newValue);
         if (!view.getText().toString().equals(strValue)) {
             view.setText(strValue);
         }
-
     }
 
     /**
      * Number format to display in text field
      *
-     * @return
+     * @return format
      */
     public String getFormat() {
         return format;
@@ -95,7 +99,7 @@ public class BindableDouble extends BaseObservable {
     /**
      * Set  number format to display in text field
      *
-     * @param format
+     * @param format -
      */
     public void setFormat(String format) {
         this.format = format;

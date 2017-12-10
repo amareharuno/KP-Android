@@ -34,7 +34,7 @@ public class CreateChatListAdapter extends BaseListAdapter<QBUser> {
     private static Set<Integer> selectedUsers = new HashSet<>();
 
     public interface OnUserSelectedListener {
-        public void userSelected(QBUser user);
+        void userSelected(QBUser user);
     }
 
     public void setUserSelectedListener(OnUserSelectedListener selectedListener) {
